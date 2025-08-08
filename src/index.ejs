@@ -29,12 +29,25 @@
     />
 
     <% if (isLocal) { %>
+    <!-- Local import map -->
     <script type="systemjs-importmap">
       {
         "imports": {
-          "@aix/root-config": "//localhost:9000/Dashboard-root-config.js",
+          "@aix/root-config": "http://localhost:9000/Dashboard-root-config.js",
           "react": "https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.development.min.js",
           "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.development.min.js",
+          "react-router-dom": "https://unpkg.com/react-router-dom@5.3.4/umd/react-router-dom.min.js"
+        }
+      }
+    </script>
+    <% } else { %>
+    <!-- Production import map -->
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "@aix/root-config": "https://strapis.s3.ap-south-1.amazonaws.com/Dashboard-root-config.js",
+          "react": "https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js",
+          "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js",
           "react-router-dom": "https://unpkg.com/react-router-dom@5.3.4/umd/react-router-dom.min.js"
         }
       }
@@ -437,7 +450,7 @@
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <header id="herder-content">
-      <a href="/testbank" onclick="navigateTo(event, '/testbank')">Test Bank</a>
+      <a href="/" onclick="navigateTo(event, '/')">Test Bank</a>
       <div class="user-menu">
         <h4 id="user-name"></h4>
         <div class="user-icon" onclick="toggleDropdown()">
@@ -546,13 +559,11 @@
 
         if (!isAuthenticated(token) && currentPath !== "/login") {
           window.location.href = "/login";
-        } else if (isAuthenticated(token) && currentPath === "/") {
-          window.location.href = "/testbank";
         }
 
-        if (currentPath === "/testbank" || currentPath === "/testbank/") {
+        if (currentPath === "/" || currentPath === "/index.html") {
           mainContent.style.display = "flex";
-          userMenu.style.display = "flex"; // Show user menu for testbank page
+          userMenu.style.display = "flex"; // Show user menu for home page
         } else if (currentPath === "/login") {
           mainContent.style.display = "none";
           userMenu.style.display = "none"; // Hide user menu for login page
@@ -566,8 +577,8 @@
         displayUserName();
         handleRouteChange(); // Only call these when on the home page or specific pages where these containers exist
         if (
-          window.location.pathname === "/testbank" ||
-          window.location.pathname === "/testbank/"
+          window.location.pathname === "/" ||
+          window.location.pathname === "/index.html"
         ) {
           checkCardContainer();
           checkListContainer();
