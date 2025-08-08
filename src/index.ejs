@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Test Bank</title>
+    <script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.7/runtime.min.js"></script>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' https: localhost:*; script-src 'unsafe-inline' 'unsafe-eval' https: localhost:*; connect-src https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';"
+    />
+    <meta name="importmap-type" content="systemjs-importmap" />
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.9.0/lib/system/single-spa.min.js"
+        }
+      }
+    </script>
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/npm/single-spa@5.9.0/lib/system/single-spa.min.js"
+      as="script"
+    />
+
+    <% if (isLocal) { %>
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "@aix/root-config": "//localhost:9000/Dashboard-root-config.js",
+          "react": "https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.development.min.js",
+          "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.development.min.js",
+          "react-router-dom": "https://unpkg.com/react-router-dom@5.3.4/umd/react-router-dom.min.js"
+        }
+      }
+    </script>
+    <% } %>
+
+    <script src="https://cdn.jsdelivr.net/npm/import-map-overrides@2.2.0/dist/import-map-overrides.js"></script>
+    <% if (isLocal) { %>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/system.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/extras/amd.js"></script>
+    <% } else { %>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/extras/amd.min.js"></script>
+    <% } %>
+    <title>Bank Accounts</title>
+    <style>
+      .card-container {
+        border: 0px solid #ccc;
+        display: flex;
+        /* justify-content: center; */
+        /* margin-top: 150px; */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        padding: 20px;
+        flex-wrap: wrap;
+        max-width: 80%;
+        width: auto;
+      }
+
+      .list-container {
+        border: 0px solid #ccc;
+        display: flex;
+        /* justify-content: center; */
+        /* margin-top: 150px; */
+        flex-direction: column;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        padding: 20px 20px;
+        width: 80%;
+      }
+
+      .list-container.scrollable {
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      /* Scrollbar styles */
+      .list-container.scrollable::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .list-container.scrollable::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      .list-container.scrollable::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      .list-container.scrollable::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease, width 0.3s ease, height 0.3s ease;
+        min-width: 300px;
+        flex: 1 1 1 calc(33.33% - 40px);
+        max-width: 400px;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .card-container.scrollable {
+        max-height: 500px;
+        /*width: 75%;*/
+        overflow-y: auto;
+        flex-wrap: nowrap;
+        /* Prevent wrapping when scrollable */
+        /* flex-direction: column; */
+        /* Stack cards vertically when scrollable */
+        align-items: center;
+        /* Center cards horizontally */
+      }
+
+      /* Scrollbar styles */
+      .card-container.scrollable::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .card-container.scrollable::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      .card-container.scrollable::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      .card-container.scrollable::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      @media (max-width: 600px) {
+        .card-container.scrollable {
+          max-height: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .list-container.scrollable {
+          max-height: 800px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .card {
+          min-width: calc(100% - 40px);
+          margin: 10px;
+        }
+
+        .card-container {
+          flex-direction: column;
+          align-items: center;
+          width: 75%;
+          padding-right: 40px;
+        }
+
+        /* New mobile styles for the list container and lists */
+        .list-container {
+          width: 90%;
+          /* Slightly narrower on mobile */
+          padding: 15px;
+          /* Reduced padding */
+        }
+
+        .list {
+          min-width: calc(100% - 30px);
+          /* Full width minus margins */
+          margin: 8px 0;
+          /* Reduced vertical margin */
+          padding: 10px;
+          /* Reduced padding */
+          flex-direction: row;
+          /* Ensure horizontal layout */
+        }
+
+        .list h2 {
+          font-size: 20px;
+          /* Slightly smaller font */
+          white-space: normal;
+          /* Allow text to wrap */
+          text-align: left;
+          /* Align left for better mobile readability */
+        }
+
+        .list p {
+          font-size: 14px;
+          /* Slightly smaller font */
+          text-align: left;
+          /* Align left for better mobile readability */
+        }
+
+        .list img {
+          width: 32px;
+          /* Slightly smaller icon */
+          height: 32px;
+          margin: 0 10px 0 0;
+          /* Adjust margins */
+        }
+
+        .side {
+          align-items: flex-start;
+          /* Align content to start */
+        }
+      }
+
+      @media (max-width: 900px) {
+        .card {
+          flex: 1 1 calc(50% - 40px);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .card {
+          min-width: calc(100% - 40px);
+
+          margin: 10px;
+        }
+
+        card-container {
+          flex-direction: column;
+          align-items: center;
+          padding-right: 40px;
+        }
+      }
+
+      .list {
+        border: 0px solid #ccc;
+        padding: 5px;
+        margin: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease;
+        min-width: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      .list:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      main.simple-main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Add this for vertical centering */
+        min-height: 95vh;
+        padding-top: 80px;
+        box-sizing: border-box;
+      }
+
+      h1 {
+        text-align: center;
+        font-family: "Ubuntu", sans-serif;
+      }
+
+      header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        margin-bottom: 100px;
+        z-index: 1000;
+        height: 80px;
+      }
+
+      header a {
+        text-decoration: none;
+        color: #0072aa;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+      }
+
+      header .user-name {
+        font-weight: bold;
+      }
+
+      header .user-menu {
+        margin-right: 50px;
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      header .user-icon {
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #0072aa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        margin-left: 10px;
+      }
+
+      header .user-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: white;
+      }
+
+      @media (max-width: 800px) {
+        .user-menu {
+          flex-direction: column-reverse;
+          align-items: flex-start;
+          padding-top: 30px;
+        }
+
+        .userName {
+          margin-right: 0;
+          margin-top: -1px;
+        }
+
+        .user-icon {
+          margin-top: 5px;
+        }
+      }
+
+      header .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        top: 50px;
+      }
+
+      header .dropdown-menu a {
+        display: block;
+        padding: 10px 20px;
+        text-decoration: none;
+        color: #333;
+      }
+
+      header .dropdown-menu a:hover {
+        background-color: #f8f9fa;
+      }
+
+      .card img {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+      }
+
+      .list img {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+        margin-left: 10px;
+      }
+
+      .card h2 {
+        margin: 10px 0;
+        font-size: 24px;
+        color: #333;
+        font-family: "Ubuntu", sans-serif;
+      }
+
+      .list h2 {
+        margin: 10px 0;
+        font-size: 24px;
+        color: #333;
+        font-family: "Ubuntu", sans-serif;
+        text-align: right;
+        width: 100%;
+        white-space: nowrap;
+      }
+
+      .card p {
+        color: #666;
+        font-size: 16px;
+        font-family: "Ubuntu", sans-serif;
+      }
+
+      .list p {
+        color: #666;
+        font-size: 16px;
+        font-family: "Ubuntu", sans-serif;
+        width: 100%;
+        text-align: right;
+      }
+
+      .side {
+        display: -webkit-flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 5px;
+      }
+
+      #main-content {
+        display: none;
+        padding-top: 60px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <header id="herder-content">
+      <a href="/" onclick="navigateTo(event, '/')">Test Bank</a>
+      <div class="user-menu">
+        <h4 id="user-name"></h4>
+        <div class="user-icon" onclick="toggleDropdown()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+            />
+          </svg>
+        </div>
+        <div class="dropdown-menu">
+          <button onClick="handleRootSignOut()">Sign out</button>
+        </div>
+      </div>
+    </header>
+    <main id="main-content" class="simple-main">
+      <div class="card-container" id="card-container">
+        <!-- Cards will be injected here from API -->
+      </div>
+    </main>
+
+    <script>
+      System.import("@aix/root-config");
+      function checkListContainer() {
+        const listContainer = document.querySelector(".list-container");
+        if (!listContainer) return; // Exit if container doesn't exist
+        const lists = listContainer.querySelectorAll(".list");
+        if (!lists) return; // Exit if no lists found // Calculate if we need scrolling (more than 4 items)
+        if (lists.length > 4) {
+          listContainer.classList.add("scrollable");
+        } else {
+          listContainer.classList.remove("scrollable");
+        }
+      }
+      function checkCardContainer() {
+        const cardContainer = document.querySelector(".card-container");
+        if (!cardContainer) return; // Exit if container doesn't exist
+        const cards = cardContainer.querySelectorAll(".card");
+        if (!cards) return; // Exit if no cards found // Calculate if we need scrolling (more than 2 cards)
+        if (cards.length > 2) {
+          cardContainer.classList.add("scrollable");
+        } else {
+          cardContainer.classList.remove("scrollable");
+        }
+      }
+
+      function getSessionItem(item) {
+        return sessionStorage.getItem(item);
+      }
+
+      function setSessionItem(item, value) {
+        sessionStorage.setItem(item, value);
+      }
+
+      function removeSessionItem(item) {
+        sessionStorage.removeItem(item);
+      }
+
+      function isAuthenticated(token) {
+        console.log("!!token", token);
+        return !!token; // Example: Token exists
+      }
+
+      function navigateTo(event, url) {
+        event.preventDefault();
+        let token = getSessionItem("MFE_Token");
+        if (isAuthenticated(token)) {
+          window.singleSpaNavigate(url);
+        } else {
+          window.location.href = "/login"; // Redirect to login page
+        }
+      }
+
+      function toggleDropdown() {
+        const dropdown = document.querySelector(".dropdown-menu");
+        dropdown.style.display =
+          dropdown.style.display === "block" ? "none" : "block";
+      }
+
+      function handleRootSignOut() {
+        console.log("signOut");
+        removeSessionItem("MFE_Token");
+        removeSessionItem("userName");
+        removeSessionItem("bearer");
+        if (window.handleSignOut) {
+          removeSessionItem("MFE_Token");
+          removeSessionItem("userName");
+          console.log("entered if");
+          window.handleSignOut();
+        }
+        window.location.href = "/login"; // Redirect to login page after sign out
+      }
+
+      // DOM manipulation functions
+      function displayUserName() {
+        let user = getSessionItem("userName");
+        console.log("user", user);
+        document.getElementById("user-name").textContent = user;
+      }
+
+      function handleRouteChange() {
+        const mainContent = document.getElementById("main-content");
+        const userMenu = document.querySelector(".user-menu");
+        const currentPath = window.location.pathname;
+        let token = getSessionItem("MFE_Token");
+        console.log("token-spa", token);
+
+        if (!isAuthenticated(token) && currentPath !== "/login") {
+          window.location.href = "/login";
+        }
+
+        if (currentPath === "/" || currentPath === "/index.html") {
+          mainContent.style.display = "flex";
+          userMenu.style.display = "flex"; // Show user menu for home page
+        } else if (currentPath === "/login") {
+          mainContent.style.display = "none";
+          userMenu.style.display = "none"; // Hide user menu for login page
+        } else {
+          mainContent.style.display = "none";
+          userMenu.style.display = "flex"; // Show user menu for other pages
+        }
+      }
+
+      function initialize() {
+        displayUserName();
+        handleRouteChange(); // Only call these when on the home page or specific pages where these containers exist
+        if (
+          window.location.pathname === "/" ||
+          window.location.pathname === "/index.html"
+        ) {
+          checkCardContainer();
+          checkListContainer();
+        }
+        window.addEventListener("single-spa:routing-event", handleRouteChange);
+      }
+      // Run initial setup
+      initialize();
+    </script>
+    <script type="module">
+      import { fetchWidgets } from "/js/config.js";
+
+      async function loadCardsFromWidgets() {
+        const container = document.getElementById("card-container");
+        if (!container) return;
+
+        try {
+          const widgets = await fetchWidgets();
+
+          // ✅ Exclude 'login' from rendering as a card
+          const visibleWidgets = widgets.filter(
+            (widget) =>
+              widget.name.toLowerCase() !== "login" && widget.route !== "/login"
+          );
+
+          visibleWidgets.forEach((widget) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.setAttribute(
+              "onclick",
+              `navigateTo(event, '${widget.route}/')`
+            );
+
+            card.innerHTML = `
+          <div class="image"></div>
+          <div class="side">
+            <h2>${widget.name}</h2>
+            <p>${widget.route.replace("/", "")}</p>
+          </div>
+        `;
+
+            container.appendChild(card);
+          });
+
+          checkCardContainer(); // re-check scroll behavior
+        } catch (err) {
+          console.error("❌ Failed to load widgets:", err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadCardsFromWidgets);
+    </script>
+
+    <import-map-overrides-full
+      show-when-local-storage="devtools"
+      dev-libs
+    ></import-map-overrides-full>
+  </body>
+</html>
