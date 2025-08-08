@@ -6,7 +6,7 @@ const STATIC_APPS = [
   {
     name: "@aix/root-config",
     app: () => System.import("http://localhost:9000/Dashboard-root-config.js"),
-    activeWhen: ["/"],
+    activeWhen: ["/testbank"],
   },
 ];
 
@@ -41,4 +41,10 @@ widgetManager.initialize().then(() => {
   // ✅ Start single-spa after dynamic + static registration
   console.log("✅ Starting single-spa...");
   start({ urlRerouteOnly: true });
+
+  // Redirect from root to /testbank
+  if (window.location.pathname === '/') {
+    window.history.pushState({}, '', '/testbank');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
 });

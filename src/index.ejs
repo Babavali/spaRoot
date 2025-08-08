@@ -437,7 +437,7 @@
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <header id="herder-content">
-      <a href="/" onclick="navigateTo(event, '/')">Test Bank</a>
+      <a href="/testbank" onclick="navigateTo(event, '/testbank')">Test Bank</a>
       <div class="user-menu">
         <h4 id="user-name"></h4>
         <div class="user-icon" onclick="toggleDropdown()">
@@ -546,11 +546,13 @@
 
         if (!isAuthenticated(token) && currentPath !== "/login") {
           window.location.href = "/login";
+        } else if (isAuthenticated(token) && currentPath === "/") {
+          window.location.href = "/testbank";
         }
 
-        if (currentPath === "/" || currentPath === "/index.html") {
+        if (currentPath === "/testbank" || currentPath === "/testbank/") {
           mainContent.style.display = "flex";
-          userMenu.style.display = "flex"; // Show user menu for home page
+          userMenu.style.display = "flex"; // Show user menu for testbank page
         } else if (currentPath === "/login") {
           mainContent.style.display = "none";
           userMenu.style.display = "none"; // Hide user menu for login page
@@ -564,8 +566,8 @@
         displayUserName();
         handleRouteChange(); // Only call these when on the home page or specific pages where these containers exist
         if (
-          window.location.pathname === "/" ||
-          window.location.pathname === "/index.html"
+          window.location.pathname === "/testbank" ||
+          window.location.pathname === "/testbank/"
         ) {
           checkCardContainer();
           checkListContainer();
